@@ -21,8 +21,17 @@ from vulcan import Account
 from vulcan import Keystore
 from vulcan import Vulcan
 
+# SETTINGS
 maxLines = 75
 maxRows = 100
+startDate = datetime.date(2020, 9, 1)
+endDate = datetime.date(2021, 5, 10)
+filePrefix = "matematyka"
+fileExtension = ".txt"
+subjectName = "Matematyka"
+
+# INIT
+mathLessons = []
 
 def getKeystore():
   f = open("keystore.json")
@@ -34,23 +43,16 @@ def getAccount():
 
 async def main():
   client = Vulcan(getKeystore(), getAccount())
-  client.set_logging_level(0)
-
-  startDate = datetime.date(2020, 9, 1)
-  endDate = datetime.date(2021, 5, 10)
-
   await client.select_student()
 
   lessons = await client.data.get_lessons(date_from=startDate, date_to=endDate)
 
-  mathLessonsArray = []
-
   async for lesson in lessons:
-    if (lesson.subject.name == "Matematyka"):
-      mathLessonsArray.append(str(lesson.date.date))
+    if (lesson.subject.name == subjectName):
+      mathLessons.append(str(lesson.date.date))
 
-  for date in mathLessonsArray:
-    f = open("notes/" + "matematyka " + date + ".txt", "w", encoding="utf-8")
+  for date in mathLessons:
+    f = open("notes/" + filePrefix + " " + date + fileExtension, "w", encoding="utf-8")
 
     for i in range(random.randint(0, maxLines)):
       for i in range(random.randint(0, maxRows)):
